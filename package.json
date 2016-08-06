@@ -1,0 +1,35 @@
+{
+  "name": "mm-services-events",
+  "version": "0.0.1",
+  "description": "Event dispatching service for MicroMinion platform",
+  "main": "index.js",
+  "scripts": {
+    "check-updates": "npm-check",
+    "test": "echo",
+    "2npm": "publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MicroMinion/mm-services-events.git"
+  },
+  "keywords": [
+    "pubsub",
+    "events",
+    "microminion"
+  ],
+  "author": {
+    "name": "Thomas Delaet",
+    "email": "thomas@delaet.org"
+  },
+  "devDependencies": {
+    "publish": "^0.6.0"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MicroMinion/mm-services-events/issues"
+  },
+  "homepage": "https://github.com/MicroMinion/mm-services-events#readme",
+  "dependencies": {
+    "lodash": "^4.14.1"
+  }
+}
