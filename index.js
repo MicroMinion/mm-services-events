@@ -42,10 +42,27 @@ Events.prototype.processEvent = function (topic, publicKey, data) {
       self._log.debug('send message to subscriber ' + subscriberKey)
       self.platform.messaging.send(topic, subscriberKey, data, {
         realtime: true,
-        expireAfter: 2000
+        expireAfter: 2000,
+        callback: self._unsubscribe.bind(self, subscriberKey)
       })
     })
   }
+}
+
+Events.prototype._unsubscribe = function (publicKey, err) {
+  if (!err) {
+    return
+  }
+  var topics = []
+  var self = this
+  _.forEach(this.subscribers, function (subscribers, topic) {
+    if (_.has(subscribers, publicKey)) {
+      topics.push(topic)
+    }
+  })
+  _.forEach(topics, function (topic) {
+    delete self.subscribers[topic][publicKey]
+  })
 }
 
 Events.prototype.subscribe = function (topic, publicKey, data) {
