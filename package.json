@@ -1,6 +1,6 @@
 {
   "name": "mm-services-events",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Event dispatching service for MicroMinion platform",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "email": "thomas@delaet.org"
   },
   "devDependencies": {
-    "publish": "^0.6.0"
+    "publish": "0.6.0"
   },
   "license": "MIT",
   "bugs": {
@@ -30,6 +30,6 @@
   },
   "homepage": "https://github.com/MicroMinion/mm-services-events#readme",
   "dependencies": {
-    "lodash": "^4.14.1"
+    "lodash": "4.15.0"
   }
 }
