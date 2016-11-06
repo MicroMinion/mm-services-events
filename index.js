@@ -2,6 +2,7 @@
 
 var assert = require('assert')
 var _ = require('lodash')
+var winstonWrapper = require('winston-meta-wrapper')
 
 var SUBSCRIPTION_TIMEOUT = 1000 * 60 * 5
 
@@ -10,7 +11,10 @@ var Events = function (options) {
   assert(_.isObject(options.platform))
   this.platform = options.platform
   assert(_.isObject(options.logger))
-  this._log = options.logger
+  this._log = winstonWrapper(options.logger)
+  this._log.addMeta({
+    module: 'mm:services:events'
+  })
   var events = this
   this.subscribers = {}
   this.platform.messaging.on('self.*', this.processEvent.bind(this))
@@ -31,38 +35,21 @@ var Events = function (options) {
 
 Events.prototype.processEvent = function (topic, publicKey, data) {
   var self = this
-  // debug('processEvent')
   topic = topic.replace('self.', '')
   if (publicKey !== 'local') {
     return
   }
-  if (_.has(self.subscribers, topic)) {
-    self._log.debug('processEvent - has subscribers')
-    _.forEach(self.subscribers[topic], function (date, subscriberKey) {
-      self._log.debug('send message to subscriber ' + subscriberKey)
-      self.platform.messaging.send(topic, subscriberKey, data, {
-        realtime: true,
-        expireAfter: 2000,
-        callback: self._unsubscribe.bind(self, subscriberKey)
+  if (topic === 'flukso.sensor.')
+    if (_.has(self.subscribers, topic)) {
+      self._log.debug('processEvent - has subscribers')
+      _.forEach(self.subscribers[topic], function (date, subscriberKey) {
+        self._log.debug('send message to subscriber ' + subscriberKey)
+        self.platform.messaging.send(topic, subscriberKey, data, {
+          realtime: true,
+          expireAfter: 2000
+        })
       })
-    })
   }
-}
-
-Events.prototype._unsubscribe = function (publicKey, err) {
-  if (!err) {
-    return
-  }
-  var topics = []
-  var self = this
-  _.forEach(this.subscribers, function (subscribers, topic) {
-    if (_.has(subscribers, publicKey)) {
-      topics.push(topic)
-    }
-  })
-  _.forEach(topics, function (topic) {
-    delete self.subscribers[topic][publicKey]
-  })
 }
 
 Events.prototype.subscribe = function (topic, publicKey, data) {
