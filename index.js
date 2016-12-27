@@ -34,25 +34,31 @@ var Events = function (options) {
 }
 
 Events.prototype.processEvent = function (topic, publicKey, data) {
+  this._log.debug('processEvent', {
+    topic: topic
+  })
   var self = this
   topic = topic.replace('self.', '')
   if (publicKey !== 'local') {
     return
   }
-  if (topic === 'flukso.sensor.')
-    if (_.has(self.subscribers, topic)) {
-      self._log.debug('processEvent - has subscribers')
-      _.forEach(self.subscribers[topic], function (date, subscriberKey) {
-        self._log.debug('send message to subscriber ' + subscriberKey)
-        self.platform.messaging.send(topic, subscriberKey, data, {
-          realtime: true,
-          expireAfter: 2000
-        })
+  if (_.has(self.subscribers, topic)) {
+    self._log.debug('processEvent - has subscribers')
+    _.forEach(self.subscribers[topic], function (date, subscriberKey) {
+      self._log.debug('send message to subscriber ' + subscriberKey)
+      self.platform.messaging.send(topic, subscriberKey, data, {
+        realtime: true,
+        expireAfter: 2000
       })
+    })
   }
 }
 
 Events.prototype.subscribe = function (topic, publicKey, data) {
+  this._log.debug('subscribe', {
+    topic: data.topic,
+    subscriber: publicKey
+  })
   if (topic !== 'self.events.subscribe') {
     return
   }
